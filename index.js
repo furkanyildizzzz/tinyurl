@@ -2,6 +2,7 @@ const express = require('express');
 const mongoose = require('mongoose');
 const memjs = require('memjs');
 const { RateLimiterMemory } = require('rate-limiter-flexible');
+const userRoutes = require('./routes/user');
 
 require('dotenv').config();
 
@@ -44,6 +45,9 @@ const rateLimiter = new RateLimiterMemory({
     return res.send("You requested to shorten url " +  url)
   })
 
+  app.use('/user', userRoutes);
+
+  
   // Start the server
 app.listen(port, () => {
     console.log(process.env.MONGODB_CONNECTION_STRING)
