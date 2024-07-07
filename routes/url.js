@@ -9,31 +9,31 @@ const {
 } = require('../services/urlServices');
 
 router.post('/shorten', async (req, res, next) => {
-  const createdUrl = await createUrl(req, res);
-  return res.status(200).json(createdUrl);
+  try {
+    const response = await createUrl(req, res);
+    return res.status(200).json(response);
+  } catch (error) {
+    next(error);
+  }
 });
 
 router.post('/redirect', async (req, res, next) => {
-  const { url } = req.body;
-  const originalUrl = await getUrl(url);
-  return res.status(200).json({ originalUrl });
+  try {
+    const response = await getUrl(req, res);
+    return res.status(200).json(response);
+  } catch (error) {
+    next(error);
+  }
 });
 
 router.post('/delete', async (req, res, next) => {
-  const { url } = req.body;
-  await deleteUrl(url);
-  return res.send('OK');
-});
-
-router.get('/get', async (req, res, next) => {
-  const shortUrl = await getShortUrl();
-  return res.send({ shortUrl });
-});
-
-router.post('/decode', async (req, res, next) => {
-  const { url } = req.body;
-  const decode = await decodeUrl(url);
-  return res.send({ decode });
+  try {
+    const { url } = req.body;
+    await deleteUrl(url);
+    return res.send('OK');
+  } catch (error) {
+    next(error);
+  }
 });
 
 module.exports = router;

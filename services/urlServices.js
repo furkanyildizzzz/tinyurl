@@ -13,36 +13,40 @@ const getCode = () => {
 };
 
 const createUrl = async (req, res) => {
-  const { url: originalUrl } = req.body;
-  const existingUrl = await Url.findOne({ originalUrl });
+  const { url } = req.body;
+
+  const existingUrl = await Url.findOne({ originalUrl: url });
   if (existingUrl) return existingUrl;
 
-  let code = getCode();
-  const { value } = await mc.get(code);
-  while (value) code = getCode();
+  const sequencerID = 1000000000;
+  const shortUrl = 'http://tinyurl.com/' + generateShortURL(sequencerID);
 
-  await mc.set(code, originalUrl, {
+  await mc.set(shortUrl, url, {
     expires: 300 * 60, //60 * 60 * 24 * 30 * 12 * 5,
   }); // Cache for 5 years
 
   return await Url.create({
-    originalUrl,
-    shortUrl: code,
+    originalUrl: url,
+    shortUrl,
     owner: req.user.id,
   });
 };
 
-const getUrl = async (shortUrl) => {
+const getUrl = async (req, res) => {
+  const { shortUrl } = req.body;
   const { value } = await mc.get(shortUrl);
   if (value) return { memcahce: value.toString('utf8') };
 
-  const { originalUrl } = await Url.findOne({ shortUrl });
+  const url = await Url.findOne({ shortUrl });
 
-  if (originalUrl)
-    await mc.set(shortUrl, originalUrl, {
+  if (url) {
+    await mc.set(shortUrl, url.originalUrl, {
       expires: 300 * 60, //60 * 60 * 24 * 30 * 12 * 5,
     });
-  return { db: originalUrl };
+  } else {
+    res.status(400).json({ error: `The orignal Url cannot be found!` });
+  }
+  return { db: url.originalUrl };
 };
 
 const deleteUrl = async (originalUrl) => await Url.deleteOne({ originalUrl });
