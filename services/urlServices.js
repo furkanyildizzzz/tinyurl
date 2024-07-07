@@ -5,6 +5,7 @@ const {
   generateShortURL,
   decodeShortURL,
 } = require('../helper/generateShortUrl');
+
 const getCode = () => {
   let code = new Array(6)
     .fill()
@@ -18,8 +19,7 @@ const createUrl = async (req, res) => {
   const existingUrl = await Url.findOne({ originalUrl: url });
   if (existingUrl) return existingUrl;
 
-  const sequencerID = 1000000000;
-  const shortUrl = 'http://tinyurl.com/' + generateShortURL(sequencerID);
+  const shortUrl = 'http://tinyurl.com/' + (await generateShortURL());
 
   await mc.set(shortUrl, url, {
     expires: 300 * 60, //60 * 60 * 24 * 30 * 12 * 5,

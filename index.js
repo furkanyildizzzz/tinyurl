@@ -6,6 +6,7 @@ const urlRoutes = require('./routes/url');
 const authenticate = require('./middleware/authorization');
 const errorHandling = require('./middleware/errorHandling');
 const rateLimiting = require('./middleware/rateLimiting');
+const initializeCounter = require('./lib/initializeCounter');
 
 require('dotenv').config();
 
@@ -22,6 +23,9 @@ mongoose
   .catch((error) => {
     console.error('Error connecting to MongoDB:', error);
   });
+
+// Initialize the counter for short URL sequences
+initializeCounter();
 
 // Rate limiting middleware
 app.use(rateLimiting);

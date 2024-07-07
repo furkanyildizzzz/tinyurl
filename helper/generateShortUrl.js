@@ -1,6 +1,20 @@
+const Counter = require('../models/counter');
+
 const BASE58 = '123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz';
 
+async function getSequencerId() {
+  // Increment the sequence ID atomically
+  const counter = await Counter.findByIdAndUpdate(
+    'urlSeq',
+    { $inc: { seq: 1 } },
+    { new: true, upsert: true },
+  );
+
+  return counter.seq;
+}
+
 function encodeBase58(number) {
+  console.log({ number });
   let encoded = '';
   while (number) {
     let remainder = number % 58;
@@ -22,7 +36,9 @@ function decodeBase58(encoded) {
   return decoded;
 }
 
-function generateShortURL(sequencerID) {
+async function generateShortURL() {
+  const sequencerID = await getSequencerId();
+
   // Ensure sequencerID starts from at least 1 billion
   if (sequencerID < 1000000000) {
     throw new Error('Sequencer ID must start from at least 1 billion');
