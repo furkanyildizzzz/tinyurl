@@ -1,7 +1,10 @@
 const Url = require('../models/url');
 const mc = require('../lib/memcacheClient');
 const chars = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz';
-
+const {
+  generateShortURL,
+  decodeShortURL,
+} = require('../helper/generateShortUrl');
 const getCode = () => {
   let code = new Array(6)
     .fill()
@@ -42,8 +45,13 @@ const getUrl = async (shortUrl) => {
 
 const deleteUrl = async (originalUrl) => await Url.deleteOne({ originalUrl });
 
+const getShortUrl = async (originalUrl) => generateShortURL(1000001392);
+const decodeUrl = async (originalUrl) => decodeShortURL(originalUrl);
+
 module.exports = {
   createUrl,
   getUrl,
   deleteUrl,
+  getShortUrl,
+  decodeUrl,
 };

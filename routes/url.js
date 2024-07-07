@@ -1,6 +1,12 @@
 const express = require('express');
 const router = express.Router();
-const { createUrl, getUrl, deleteUrl } = require('../services/urlServices');
+const {
+  createUrl,
+  getUrl,
+  deleteUrl,
+  getShortUrl,
+  decodeUrl,
+} = require('../services/urlServices');
 
 router.post('/shorten', async (req, res, next) => {
   const { url } = req.body;
@@ -18,6 +24,17 @@ router.post('/delete', async (req, res, next) => {
   const { url } = req.body;
   await deleteUrl(url);
   return res.send('OK');
+});
+
+router.get('/get', async (req, res, next) => {
+  const shortUrl = await getShortUrl();
+  return res.send({ shortUrl });
+});
+
+router.post('/decode', async (req, res, next) => {
+  const { url } = req.body;
+  const decode = await decodeUrl(url);
+  return res.send({ decode });
 });
 
 module.exports = router;
