@@ -22,9 +22,6 @@ mongoose
     console.error('Error connecting to MongoDB:', error);
   });
 
-// Connect to Memcache
-const memcacheClient = memjs.Client.create(process.env.MEMCACHIER_SERVERS);
-
 // Rate limiting middleware
 const rateLimiter = new RateLimiterMemory({
   points: 10, // 10 requests

@@ -11,7 +11,7 @@ router.post('/shorten', async (req, res, next) => {
 router.post('/redirect', async (req, res, next) => {
   const { url } = req.body;
   const originalUrl = await getUrl(url);
-  return res.status(200).json(originalUrl);
+  return res.status(200).json({ originalUrl });
 });
 
 router.post('/delete', async (req, res, next) => {
