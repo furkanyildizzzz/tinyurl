@@ -1,13 +1,19 @@
 const express = require('express');
 const bcrypt = require('bcrypt');
 const User = require('../models/user');
+const Url = require('../models/url');
 const jwt = require('jsonwebtoken');
 const authenticate = require('../middleware/authorization');
 
 const router = express.Router();
 
 router.get('/', authenticate, async (req, res, next) => {
-  res.status(200).send('OK');
+  res.status(200).send(req.user);
+});
+
+router.get('/urls', authenticate, async (req, res, next) => {
+  const urls = await Url.find({ owner: req.user.id });
+  res.status(200).json(urls);
 });
 
 router.post('/register', async (req, res, next) => {

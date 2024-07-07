@@ -12,7 +12,8 @@ const getCode = () => {
   return 'http://tinyurl.com/' + code.join('');
 };
 
-const createUrl = async (originalUrl) => {
+const createUrl = async (req, res) => {
+  const { url: originalUrl } = req.body;
   const existingUrl = await Url.findOne({ originalUrl });
   if (existingUrl) return existingUrl;
 
@@ -27,6 +28,7 @@ const createUrl = async (originalUrl) => {
   return await Url.create({
     originalUrl,
     shortUrl: code,
+    owner: req.user.id,
   });
 };
 

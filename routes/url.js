@@ -9,8 +9,7 @@ const {
 } = require('../services/urlServices');
 
 router.post('/shorten', async (req, res, next) => {
-  const { url } = req.body;
-  const createdUrl = await createUrl(url);
+  const createdUrl = await createUrl(req, res);
   return res.status(200).json(createdUrl);
 });
 
